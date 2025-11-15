@@ -1,110 +1,86 @@
 # Bivariate Choropleth: Gun Violence Rate & Republican Vote Percentage in the US
 
-This project visualizes the relationship between **gun violence incidents** and **Republican vote percentage** in the United States using a **bivariate choropleth map**. The map highlights patterns across states for incidents per capita and voting behavior.
+This project visualises the relationship between **the number of gun violence incidents per thousand population between 2019 and 2020** and **the percentage of Republican votes in the 2020 presidential election** in the United States using a **bivariate choropleth map**. The map highlights patterns across states for incidents per capita and voting behavior.
+
 ![Choropleth](choropleth.png)
 
-## **Data Sources**
+## Methods
 
-1. **Gun Violence Incidents (2013–2022)**
-   Source: [Gun Violence Archive](https://www.gunviolencearchive.org)
+**Definition of gun violence:** Any incident resulting in death, injury, or threat with firearms, without consideration of intent or consequence. This includes officer-involved shootings, accidental shootings, children shooting themselves, murders, armed robberies, familicide, mass shootings, defensive gun use, home invasions, drive-bys, etc.
 
-   * Filtered for incidents between **2019 and 2020**.
-   * Grouped by state.
-   * Counted total incidents per state.
-   * **Cleaned dataset**: `[state, gun incident count]`.
+### Find the rate of gun violence incidents between 2019 and 2020 by state per thousand population
 
-2. **US State Population (2020 Census)**
-   Source:[us population by state](https://www.kaggle.com/datasets/alexandrepetit881234/us-population-by-state)
+**Raw data example:**
 
-   * Used to calculate per-capita gun violence rates.
-   * **Cleaned dataset**: `[state, population]`.
+| incident_id | date       | state        | city                  | address                   | n_killed | n_injured |
+|------------:|------------|--------------|----------------------|---------------------------|----------|-----------|
+| 1512996     | 2019-09-26 | Illinois     | Chicago              | 7000 block of S Perry Ave | 1        | 1         |
+| 1513675     | 2019-09-26 | New York     | New York (Manhattan) | W 3rd St and Broadway     | 0        | 0         |
+| 1518368     | 2019-09-26 | Pennsylvania | Pittsburgh           |                           | 0        | 0         |
 
-4. **2020 US Election Votes**
-  Source: [US Election Dataset](https://www.kaggle.com/datasets/essarabi/ultimate-us-election-dataset)
-   * Percentage of Republican votes per state.
-   * **Cleaned dataset**: `[state, % Republicans]`.
+**State-level total incidents (example):**
 
-5. **CSV Files for Project:**
-   [Download all required CSV files here](https://drive.google.com/drive/folders/1GeyRs_ODFIm-DsTjXGKTzu6kTxSg5fd9?usp=sharing)
+| State      | Count |
+|------------|-------|
+| Oklahoma   | 1503  |
+| Maryland   | 3337  |
+| Michigan   | 4093  |
+| Missouri   | 3369  |
+| Texas      | 8458  |
 
----
+**Compute gun violence rate per 10,000 population:**
 
-## **Data Processing**
+\[
+\text{Gun violence rate} = \frac{\text{Total incidents by state}}{\text{Population by state}} \times 10,000
+\]
 
-1. **Compute Gun Incident Rate per State**
+| State      | Gun Violence Rate (per 10,000) |
+|------------|-------------------------------|
+| Oklahoma   | 3.80                          |
+| Maryland   | 5.40                          |
+| Michigan   | 4.06                          |
+| Missouri   | 5.47                          |
+| Texas      | 2.90                          |
 
-   ```
-   Gun Incident Rate = (Total Gun Incidents / Population) * 10,000
-   ```
+**Merge with 2020 Election votes:**
 
-   Resulting in `[state, gun incident rate]`.
+| State       | Incident_Rate | Republicans_Percentage |
+|-------------|---------------|-----------------------|
+| Oklahoma    | 3.80          | 65.0                  |
+| Maryland    | 5.40          | 35.0                  |
+| Michigan    | 4.06          | 47.0                  |
+| Missouri    | 5.47          | 56.0                  |
+| Texas       | 2.90          | 52.0                  |
 
-2. **Merge Datasets**
-   Combined gun incident rate and Republican vote percentage per state:
+### Quantile Classification
 
-   ```
-   mergedData = [state, gun incident rate, % Republicans vote]
-   ```
+- Sort gun violence rates and Republican vote percentages in ascending order.
+- Identify lower (33%) and upper (66%) quantiles.
+- Classify states into quantiles for **bivariate mapping**.
 
-3. **Quantile Classification**
+## Data Sets
 
-   * Sorted gun incident rates and Republican vote percentages.
-   * Identified lower (33%) and upper (66%) quantiles.
-   * Classified states into quantiles for **bivariate mapping**.
+[Download all required CSV files here](https://drive.google.com/drive/folders/1GeyRs_ODFIm-DsTjXGKTzu6kTxSg5fd9?usp=sharing)  
 
----
+Sources:  
+- [Gun Violence Archive](https://www.gunviolencearchive.org/)  
+- [US Population by State (Kaggle)](https://www.kaggle.com/datasets/alexandrepetit881234/us-population-by-state)  
+- [US Election Dataset (Kaggle)](https://www.kaggle.com/datasets/essarabi/ultimate-us-election-dataset)  
 
-## **Visualization**
+## Visualization
 
-* **Map Type:** Bivariate choropleth.
-* **X-axis:** Gun incident rate (low → high).
-* **Y-axis:** Republican vote percentage (low → high).
-* **Color Scheme:** Nine-color matrix representing combinations of quantiles.
-* **Interactivity:** Hover over a state to display its gun incident rate and Republican vote percentage.
+- **Map Type:** Bivariate choropleth  
+- **X-axis:** Gun incident rate (low → high)  
+- **Y-axis:** Republican vote percentage (low → high)  
+- **Color Scheme:** Nine-color matrix representing combinations of quantiles  
+- **Interactivity:** Hover over a state to display its gun incident rate and Republican vote percentage  
 
----
+## Technologies
 
-## **Methodology & Notes**
-
-* **Bivariate Mapping:**
-  Using a 3x3 quantile classification, each state is colored according to its **gun violence rate** and **Republican vote percentage**. This approach allows patterns and correlations to be visually interpreted across two variables simultaneously.
-
-* **Quantiles:**
-  The 33rd and 66th percentiles divide the data into three groups: **low**, **medium**, and **high**. This ensures roughly equal numbers of states in each category, improving visual balance.
-
-* **Data Normalization:**
-  Gun violence rates are normalized per 10,000 population to account for differences in state population sizes.
-
-* **Interactivity:**
-  Hover tooltips provide exact numeric values for each state, enabling precise interpretation alongside color classification.
-
----
-
-## **Technologies**
-
-* **JavaScript & D3.js (v6)** for data processing and visualization.
-* **TopoJSON** for US state boundaries.
-* **HTML/CSS** for page structure and styling.
+- **JavaScript & D3.js (v6)** for data processing and visualization  
+- **HTML/CSS** for page structure and styling  
 
 ---
 
-## **File Structure**
+## File Structure
 
-```
-project/
-│
-├─ index.html       # Main HTML file with embedded CSS
-├─ script.js        # JavaScript for data processing and drawing the map
-├─ all_incidents.csv
-├─ us_pop_by_state.csv
-├─ voting.csv
-└─ README.md
-```
-
----
-
-## **How to Run**
-
-1. Download all CSV files from [this Google Drive folder](https://drive.google.com/drive/folders/1GeyRs_ODFIm-DsTjXGKTzu6kTxSg5fd9?usp=sharing) and place them in the project folder.
-2. Open `index.html` in a browser that supports ES6 modules.
-3. The choropleth map will render automatically, with hover tooltips showing each state’s values.
