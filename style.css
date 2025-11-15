@@ -1,0 +1,36 @@
+/* Tooltip */
+#tooltip {
+    position: absolute;
+    visibility: hidden;
+    background: #FAF7F7;
+    color: #785D5E;
+    font-family: Helvetica;
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 18px;
+    pointer-events: none;
+}
+
+/* Legend text */
+.legend-description {
+    font-size: 16px !important;
+    font-family: Helvetica;
+    fill: black;
+    text-anchor: middle;
+}
+
+.legend-value {
+    font-size: 10px !important;
+    font-family: Helvetica;
+    fill: black;
+    text-anchor: middle;
+}
+
+/* Map states */
+.state {
+    stroke: white;
+    stroke-width: 1;
+}
+.state:hover {
+    stroke: #7C6673;
+ 
