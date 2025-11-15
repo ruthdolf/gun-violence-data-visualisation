@@ -23,6 +23,7 @@ d3.csv("../dataset/all_incidents.csv")
 
         const stateCount = d3.rollup(filteredData, v => v.length, d => d.state.trim());
         cleaned_incidents = Array.from(stateCount, ([State, Count]) => ({ State, Count }));
+        //console.log("First 10 states with counts:", cleaned_incidents.slice(0, 10));
         loadPopulationData();
     })
     .catch(error => console.error(error));
@@ -46,6 +47,7 @@ function computeIncidentRate() {
         const rate = pop ? (incident.Count / pop) * 10000 : null;
         return { State: incident.State, Incident_Rate: rate };
     });
+    //console.log(cleaned_incidents.slice(0, 5));
     checkAndMerge();
 }
 

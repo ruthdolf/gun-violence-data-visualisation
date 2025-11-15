@@ -33,4 +33,5 @@
 }
 .state:hover {
     stroke: #7C6673;
- 
+    stroke-width: 2;
+}
